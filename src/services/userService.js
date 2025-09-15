@@ -1,0 +1,65 @@
+import bcrypt from "bcrypt";
+import { v4 as uuidv4 } from "uuid";
+import { createUser, findUserByEmail } from "../models/userModel.js";
+import jwt from "jsonwebtoken";
+
+//Registering user
+export async function registerUser(user_name, email, password) {
+  const existingUser = await findUserByEmail(email);
+  if (existingUser) {
+    const error = new Error("Email already in use");
+    error.code = "User alrady exists";
+    error.status = 409;
+    throw error;
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user_id=uuidv4();
+
+  const userId = await createUser({
+    user_id:user_id,
+    user_name,
+    email,
+    password: hashedPassword,
+  });
+
+  return { user_id, user_name, email };
+}
+
+//Login user
+
+export async function loginUser(email, password) {
+
+  const user = await findUserByEmail(email);
+  if (!user) {
+    const error = new Error("Invalid email or password");
+    error.code = "Invalid Credentials";
+    error.status = 401;
+    throw error;
+  }
+
+  //compare password
+  const isMatch=await bcrypt.compare(password,user.password_hash);
+  if(!isMatch){
+    const error = new Error("Invalid email or password");
+    error.code = "Invalid Credentials";
+    error.status = 401;
+    throw error;
+  }
+
+  //generate JWT
+  const token=jwt.sign(
+    {user_id:user.user_id,email:user.email},
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+  )
+  return {
+    token,
+    user: {
+      user_id: user.user_id,
+      user_name: user.user_name,
+      email: user.email
+    }
+  };
+}
