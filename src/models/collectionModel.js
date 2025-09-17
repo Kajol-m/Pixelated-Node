@@ -32,3 +32,14 @@ catch(err){
     throw err;
 }
 }
+
+export const getCollectionBannerById=async(collectionId)=>{
+  try{
+    const [rows]=await pool.query(`SELECT collection_image FROM collection_details WHERE collection_id=?`,[collectionId]);
+
+     return rows.length > 0 ? rows[0].collection_image : null;
+  }catch(err){
+    console.error("SQL Error:",err);
+    throw err;
+  }
+}
