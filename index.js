@@ -2,6 +2,10 @@ import express from "express";
 import dotenv from "dotenv";
 import userRoutes from "./src/routes/userRoutes.js";
 import collectionRoutes from "./src/routes/collectionRoutes.js";
+import trendingRoutes from "./src/routes/trendingRoutes.js"
+import bestsellerRoutes from "./src/routes/bestsellerRoutes.js";
+import filterRoutes from "./src/routes/filterRoutes.js";
+import orderRoutes from "./src/routes/orderRoutes.js"
 import cors from 'cors';
 import pool from "../backend-node/src/config/db.js"
 
@@ -16,6 +20,10 @@ const PORT=5000;
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/products",collectionRoutes);
+app.use("/api/trending",trendingRoutes);
+app.use("/api/bestseller",bestsellerRoutes);
+app.use("/api/products",filterRoutes);
+app.use("/api",orderRoutes);
 app.get("/api/products/:id/images", async (req, res) => {
   const productId = req.params.id;
 
