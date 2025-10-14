@@ -7,8 +7,7 @@ import bestsellerRoutes from "./src/routes/bestsellerRoutes.js";
 import filterRoutes from "./src/routes/filterRoutes.js";
 import orderRoutes from "./src/routes/orderRoutes.js"
 import cors from 'cors';
-import pool from "../backend-node/src/config/db.js"
-
+import pool from "./src/config/db.js";
 dotenv.config();
 const app = express();
 
