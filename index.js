@@ -13,6 +13,19 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+// CORS configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000',
+    'https://your-production-frontend.com' // Add your production frontend URL
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 const PORT=5000;
 
