@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
-import { createUser, findUserByEmail } from "../models/userModel.js";
+import { addToWishlist, createUser, findUserByEmail, ifProductWishlistedByUser,productWishlistId } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 
 //Registering user
@@ -62,4 +62,21 @@ export async function loginUser(email, password) {
       email: user.email
     }
   };
+}
+
+export async function productWishlist(user_id,product_id){
+  const ifAlreadyWishList= await ifProductWishlistedByUser(user_id,product_id);
+  if(ifProductWishlistedByUser){
+    const response="Added to Wishlist !";
+  }
+
+  const wishlist_id=await productWishlistId();
+
+  const wishlistId=await addToWishlist({
+    wishlist_id:wishlist_id,
+    user_id,
+    product_id
+  });
+
+  return {wishlist_id};
 }

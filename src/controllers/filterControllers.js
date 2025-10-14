@@ -1,4 +1,4 @@
-import { getAllTops,  getAllBottoms, getAllDresses, getAllSkirts, getAllAccessories, getAllClothing } from "../models/filterModel.js";
+import { getAllTops,  getAllBottoms, getAllDresses, getAllSkirts, getAllAccessories, getAllClothing, getProductsByCategory } from "../models/filterModel.js";
 
 export const fetchAllTops=async(req,res)=>{
     try{
@@ -59,5 +59,16 @@ export const fetchAllClothing=async(req,res)=>{
         res.status(500).json({message:"server error"});
     }
 };
+
+export const fetchProductsByCategory=async(req,res)=>{
+    try{
+        const {category}=req.params;
+        const  products=await getProductsByCategory(category);
+        res.json(products);
+    }catch(err){
+     console.error(err);
+     res.status(500).json({message:'Server error'})
+    }
+}
 
 
