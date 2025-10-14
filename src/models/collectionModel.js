@@ -1,4 +1,5 @@
 import pool from "../config/db.js"
+
 export const getProductsByCollection=async(collectionId)=>{
   try{
     const [rows]=await pool.query(

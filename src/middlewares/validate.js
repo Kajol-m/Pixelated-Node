@@ -1,4 +1,5 @@
 import { body, validationResult } from "express-validator";
+import jwt from 'jsonwebtoken';
 
 export const validateRegister = [
   body("user_name").notEmpty().withMessage("Username required"),
@@ -13,3 +14,16 @@ export const validateRegister = [
     next();
   },
 ];
+
+//validate Token
+export const authenticateToken=(req,res,next)=>{
+     const authHeader=req.headers['authorization'];
+     const token=authHeader && authHeader.split(' ')[1]; //Bearer Token
+
+     if(!token) return res.status(401).json({error:'Unauthorized'});
+     jwt.verify(token,process.env.JWT_SECRET,(err,user)=>{
+          if(err) return res.status(403).json({error:'Invalid token'});
+          req.user=user;
+          next();
+     })
+}
