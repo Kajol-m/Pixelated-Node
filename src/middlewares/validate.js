@@ -18,6 +18,7 @@ export const validateRegister = [
 //validate Token
 export const authenticateToken=(req,res,next)=>{
      const authHeader=req.headers['authorization'];
+     if (!authHeader) return res.status(401).json({ message: "No token" });
      const token=authHeader && authHeader.split(' ')[1]; //Bearer Token
 
      if(!token) return res.status(401).json({error:'Unauthorized'});

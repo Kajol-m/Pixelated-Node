@@ -1,5 +1,13 @@
-import { registerUser, loginUser, productWishlist } from "../services/userService.js";
-import { getUserAddress, getUserDetails,removeFromWishlist} from "../models/userModel.js";
+import {
+  registerUser,
+  loginUser,
+  productWishlist,
+} from "../services/userService.js";
+import {
+  getUserAddress,
+  getUserDetails,
+  removeFromWishlist,
+} from "../models/userModel.js";
 import pool from "../config/db.js";
 
 //Register User
@@ -10,19 +18,19 @@ export async function register(req, res) {
     if (!user_name || !email || !password) {
       return res.status(400).json({
         code: "VALIDATION_ERROR",
-        message: "All fields are required"
+        message: "All fields are required",
       });
     }
 
     const user = await registerUser(user_name, email, password);
     res.status(201).json({
       message: "User registered successfully",
-      user
+      user,
     });
   } catch (err) {
     res.status(err.status || 500).json({
       code: err.code || "INTERNAL_SERVER_ERROR",
-      message: err.message || "Something went wrong"
+      message: err.message || "Something went wrong",
     });
   }
 }
@@ -35,76 +43,91 @@ export async function login(req, res) {
     if (!email || !password) {
       return res.status(400).json({
         code: "VALIDATION_ERROR",
-        message: "Email and password are required"
+        message: "Email and password are required",
       });
     }
 
     const result = await loginUser(email, password);
     res.status(200).json({
       message: "Login successful",
-      ...result
+      ...result,
     });
   } catch (err) {
     res.status(err.status || 500).json({
       code: err.code || "INTERNAL_SERVER_ERROR",
-      message: err.message || "Something went wrong"
+      message: err.message || "Something went wrong",
     });
+  }
+}
+
+//refreshToken
+export async function refreshAccessToken(refreshToken) {
+  refreshToken = req.cookies?.refreshToken;
+  if (!refreshToken)
+    return res.status(401).json({ message: "No refresh token" });
+
+  try {
+    const payload = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+    const newAccessToken = jwt.sign(
+      { user_id: payload.user_id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+    return newAccessToken;
+  } catch (err) {
+    throw new Error("Invalid or expired refresh token");
   }
 }
 
 //Get User Deatils
-export async function fetchUserDetails(req,res){
-  try{
-      const userId = req.user.user_id;
-      const result=await getUserDetails(userId);
-      res.json(result);
-  }
-  catch(err){
-    res.status(500).json({error: 'Database error', details: err.message});
-  }
-}
-
-export async function fetchUserAddress(req,res){
-  try{
-    const userId=req.user.user_id;
-    const result= await getUserAddress(userId);
+export async function fetchUserDetails(req, res) {
+  try {
+    const userId = req.user.user_id;
+    const result = await getUserDetails(userId);
     res.json(result);
-  }
-  catch(err){
-    res.status(500).json({error: 'Database error', details: err.message});
+  } catch (err) {
+    res.status(500).json({ error: "Database error", details: err.message });
   }
 }
 
-export async function setWishlist(req,res) {
-  try{
-    const { user_id,product_id } = req.body;
-    const wishlist = await productWishlist(user_id,product_id);
+export async function fetchUserAddress(req, res) {
+  try {
+    const userId = req.user.user_id;
+    const result = await getUserAddress(userId);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: "Database error", details: err.message });
+  }
+}
+
+export async function setWishlist(req, res) {
+  try {
+    const { user_id, product_id } = req.body;
+    const wishlist = await productWishlist(user_id, product_id);
     res.status(201).json({
       message: "Added to Wishlist",
-      wishlist
+      wishlist,
     });
-  }
-  catch (err) {
+  } catch (err) {
     res.status(err.status || 500).json({
       code: err.code || "INTERNAL_SERVER_ERROR",
-      message: err.message || "Something went wrong"
+      message: err.message || "Something went wrong",
     });
   }
 }
 
-export async function removeWishlist(req,res) {
-  try{
-    const { user_id,product_id } = req.body;
+export async function removeWishlist(req, res) {
+  try {
+    const { user_id, product_id } = req.body;
     const wishlist = await removeFromWishlist({ user_id, product_id });
     res.status(201).json({
       message: "Removed from wishlist",
-      wishlist
+      wishlist,
     });
-  }
-  catch (err) {
+  } catch (err) {
     res.status(err.status || 500).json({
       code: err.code || "INTERNAL_SERVER_ERROR",
-      message: err.message || "Something went wrong"
+      message: err.message || "Something went wrong",
     });
   }
 }
