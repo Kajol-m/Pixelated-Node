@@ -19,7 +19,7 @@ const corsOptions = {
     'http://localhost:5174',
     'http://localhost:3000',
     'https://your-production-frontend.com',
-    'https://pixelated-kajol.netlify.app/', // Add your production frontend URL
+    'https://pixelated-kajol.netlify.app', // Add your production frontend URL
   ],
   credentials: true,
   optionsSuccessStatus: 200
