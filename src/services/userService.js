@@ -49,13 +49,21 @@ export async function loginUser(email, password) {
   }
 
   //generate JWT
-  const token=jwt.sign(
+  const accessToken=jwt.sign(
     {user_id:user.user_id,email:user.email},
     process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+    { expiresIn: "5d" }
   )
+
+  const refreshToken=jwt.sign(
+    {user_id:user.user_id,email:user.email},
+    process.env.REFRESH_SECRET,
+    {expiresIn:"7d"}
+  );
+
   return {
-    token,
+    accessToken,
+    refreshToken,
     user: {
       user_id: user.user_id,
       user_name: user.user_name,
@@ -66,7 +74,7 @@ export async function loginUser(email, password) {
 
 export async function productWishlist(user_id,product_id){
   const ifAlreadyWishList= await ifProductWishlistedByUser(user_id,product_id);
-  if(ifProductWishlistedByUser){
+  if(ifAlreadyWishList){
     const response="Added to Wishlist !";
   }
 
@@ -78,5 +86,5 @@ export async function productWishlist(user_id,product_id){
     product_id
   });
 
-  return {wishlist_id};
+  return {wishlistId};
 }
