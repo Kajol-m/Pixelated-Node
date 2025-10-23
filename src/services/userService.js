@@ -33,8 +33,8 @@ export async function loginUser(email, password) {
 
   const user = await findUserByEmail(email);
   if (!user) {
-    const error = new Error("Invalid email or password");
-    error.code = "Invalid Credentials";
+    const error = new Error("User is not registered");
+    error.code = "USER_NOT_REGISTERED";
     error.status = 401;
     throw error;
   }
@@ -43,7 +43,7 @@ export async function loginUser(email, password) {
   const isMatch=await bcrypt.compare(password,user.password_hash);
   if(!isMatch){
     const error = new Error("Invalid email or password");
-    error.code = "Invalid Credentials";
+    error.code = "INVALID_CREDENTIALS";
     error.status = 401;
     throw error;
   }
@@ -52,9 +52,10 @@ export async function loginUser(email, password) {
   const accessToken=jwt.sign(
     {user_id:user.user_id,email:user.email},
     process.env.JWT_SECRET,
-    { expiresIn: "5d" }
+    { expiresIn: "15m" }
   )
-
+ 
+  //generate Refresh Token
   const refreshToken=jwt.sign(
     {user_id:user.user_id,email:user.email},
     process.env.REFRESH_SECRET,

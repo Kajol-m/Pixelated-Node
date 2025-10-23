@@ -37,3 +37,9 @@ export async function getCartProduct(user_id){
 
   return result;
 }
+
+export async function removeFromCart(user_id,product_id){
+  const [result] = await pool.execute("DELETE FROM order_items WHERE user_id=? AND product_id=?;",[user_id,product_id]);
+
+  return result;
+}

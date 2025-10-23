@@ -8,9 +8,11 @@ import filterRoutes from "./src/routes/filterRoutes.js";
 import orderRoutes from "./src/routes/orderRoutes.js"
 import cors from 'cors';
 import pool from "./src/config/db.js";
+import cookieParser from "cookie-parser";
+
 dotenv.config();
 const app = express();
-
+app.use(cookieParser());
 app.use(express.json());
 // CORS configuration
 const corsOptions = {
@@ -25,8 +27,8 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions));
 
+app.use(cors(corsOptions));
 const PORT=5000;
 
 // Routes

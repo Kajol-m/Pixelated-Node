@@ -1,4 +1,4 @@
-import { addToCart, getCartProduct } from "../models/orderModel.js";
+import { addToCart, getCartProduct, removeFromCart } from "../models/orderModel.js";
 
 export async function addProductToCart(req, res) {
   try {
@@ -34,6 +34,23 @@ export async function getProductOfCart(req, res) {
   } catch (err) {
     res.status(err.status || 500).json({
       code: err.code || "INTERNAL_SERVER_ERROR",
+      message: err.message || "Something went wrong",
+    });
+  }
+}
+
+export async function removeProductFromCart(req, res) {
+  try {
+    const { user_id, product_id } = req.body;
+    const order = await removeFromCart(user_id, product_id);
+    res.status(201).json({
+      message: "Removed from Cart",
+      order,
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(err.status || 500).json({
+      code: err.code || "INTERNAL_SERVER_ERRORs",
       message: err.message || "Something went wrong",
     });
   }
