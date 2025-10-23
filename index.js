@@ -15,19 +15,27 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 // CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+  'https://pixelated-kajol.netlify.app', // your production frontend
+];
+
 const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:3000',
-    'https://your-production-frontend.com',
-    'https://pixelated-kajol.netlify.app', // Add your production frontend URL
-  ],
+  origin: function (origin, callback) {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('Not allowed by CORS'), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
 
-
+app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 const PORT=5000;
 
