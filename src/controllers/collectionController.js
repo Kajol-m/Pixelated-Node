@@ -6,7 +6,6 @@ import {
 export const fetchProductsByCollection = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id);
     const products = await getProductsByCollection(id);
     res.json(products);
   } catch (err) {

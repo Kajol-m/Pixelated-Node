@@ -9,6 +9,7 @@ import {
   removeFromWishlist,
 } from "../models/userModel.js";
 import pool from "../config/db.js";
+import jwt from 'jsonwebtoken';
 
 //Register User
 export async function register(req, res) {
@@ -48,9 +49,20 @@ export async function login(req, res) {
     }
 
     const result = await loginUser(email, password);
+
+    //setting refreshToken as Http Only Cookie
+    res.cookie("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json({
       message: "Login successful",
-      ...result,
+      accessToken: result.accessToken,
+      user: result.user,
     });
   } catch (err) {
     res.status(err.status || 500).json({
@@ -60,23 +72,37 @@ export async function login(req, res) {
   }
 }
 
-//refreshToken
-export async function refreshAccessToken(refreshToken) {
-  refreshToken = req.cookies?.refreshToken;
-  if (!refreshToken)
-    return res.status(401).json({ message: "No refresh token" });
-
+//refreshToken endpoint
+export async function refreshAccessToken(req, res) {
   try {
-    const payload = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+    const refreshToken = req.cookies?.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).json({ message: "No refresh token" });
+    }
+    let payload;
+    try {
+      payload = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+      console.log("✅ Token verified:", payload);
+    } catch (e) {
+      return res
+        .status(403)
+        .json({ message: "Invalid or expired refresh token" });
+    }
     const newAccessToken = jwt.sign(
-      { user_id: payload.user_id },
+      { user_id: payload.user_id, email: payload.email },
       process.env.JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "15m" } // short lived
     );
-    return newAccessToken;
+    return res.status(200).json({ accessToken: newAccessToken });
   } catch (err) {
-    throw new Error("Invalid or expired refresh token");
+    console.error("Refresh token error:", err);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
+}
+
+export function logout(req, res) {
+  res.clearCookie("refreshToken", { path: "/" });
+  return res.json({ message: "Logged out" });
 }
 
 //Get User Deatils
