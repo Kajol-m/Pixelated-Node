@@ -21,6 +21,19 @@ export async function getUserDetails(user_id){
  return result[0] || null;
 }
 
+export async function updateUserDetails(user_details) {
+  const { user_id, user_name, phone, date_of_birth, gender } = user_details;
+
+  const [result] = await pool.execute(
+    `UPDATE user_details 
+     SET user_name = ?, phone = ?, date_of_birth = ?, gender = ?
+     WHERE user_id = ?`,
+    [user_name, phone, date_of_birth, gender, user_id]
+  );
+  return result.affectedRows;
+}
+
+
 export async function getUserAddress(user_id){
   const result=await pool.query(
     "SELECT * FROM addresses where user_id= ?",[user_id]

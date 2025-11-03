@@ -6,6 +6,7 @@ import {
 import {
   getUserAddress,
   getUserDetails,
+  updateUserDetails,
   removeFromWishlist,
 } from "../models/userModel.js";
 import pool from "../config/db.js";
@@ -115,6 +116,21 @@ export async function fetchUserDetails(req, res) {
     res.status(500).json({ error: "Database error", details: err.message });
   }
 }
+
+
+export async function addUserDetails(req, res) {
+  try {
+    const user_id = req.user.user_id;
+    const { user_name, phone, date_of_birth, gender } = req.body;
+    const user_details = { user_id, user_name, phone, date_of_birth, gender };
+    const result = await updateUserDetails(user_details);
+    res.json({ success: true, affected: result });
+  } catch (err) {
+    console.error("addUserDetails Error:", err);
+    res.status(500).json({ error: "Database error", details: err.message });
+  }
+}
+
 
 export async function fetchUserAddress(req, res) {
   try {

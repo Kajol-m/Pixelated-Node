@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register,login, fetchUserDetails, fetchUserAddress, setWishlist, removeWishlist, getWishlist, getWishlistDetails, refreshAccessToken, logout} from "../controllers/userController.js";
+import { register,login, fetchUserDetails,addUserDetails, fetchUserAddress, setWishlist, removeWishlist, getWishlist, getWishlistDetails, refreshAccessToken, logout} from "../controllers/userController.js";
 import { authenticateToken } from "../middlewares/validate.js";
 
 const router = Router();
@@ -9,6 +9,7 @@ router.post("/login", login);
 router.post("/refresh-token",refreshAccessToken);
 router.post("/logout",logout);
 router.get("/profile",authenticateToken,fetchUserDetails);
+router.post("/profile/edit",authenticateToken,addUserDetails);
 router.get("/address",authenticateToken,fetchUserAddress);
 router.post("/toggleWishlist",authenticateToken,setWishlist);
 router.delete("/toggleWishlist",authenticateToken,removeWishlist);
