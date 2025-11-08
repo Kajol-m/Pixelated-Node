@@ -25,7 +25,8 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:3000",
   "https://pixelated-kajol.netlify.app", // production frontend
-  "https://pixelated-kajol.vercel.app"
+  "https://pixelated-kajol.vercel.app",
+  "https://pixelated.kajolmurmu.com"
 ];
 
 // ✅ Robust CORS setup (handles credentials + preflight safely)
