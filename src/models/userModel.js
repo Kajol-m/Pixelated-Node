@@ -34,12 +34,6 @@ export async function updateUserDetails(user_details) {
 }
 
 
-export async function getUserAddress(user_id){
-  const result=await pool.query(
-    "SELECT * FROM addresses where user_id= ?",[user_id]
-  )
-  return result[0] || null;
-}
 //add wishlistID
 export async function productWishlistId() {
   try {
