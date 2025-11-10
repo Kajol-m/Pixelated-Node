@@ -4,7 +4,6 @@ import {
   productWishlist,
 } from "../services/userService.js";
 import {
-  getUserAddress,
   getUserDetails,
   updateUserDetails,
   removeFromWishlist,
@@ -131,16 +130,6 @@ export async function addUserDetails(req, res) {
   }
 }
 
-
-export async function fetchUserAddress(req, res) {
-  try {
-    const userId = req.user.user_id;
-    const result = await getUserAddress(userId);
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ error: "Database error", details: err.message });
-  }
-}
 
 export async function setWishlist(req, res) {
   try {

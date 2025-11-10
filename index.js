@@ -144,7 +144,7 @@ import trendingRoutes from "./src/routes/trendingRoutes.js";
 import bestsellerRoutes from "./src/routes/bestsellerRoutes.js";
 import filterRoutes from "./src/routes/filterRoutes.js";
 import orderRoutes from "./src/routes/orderRoutes.js";
-
+import addressRouter from "./src/routes/addressRoutes.js";
 dotenv.config();
 const app = express();
 
@@ -194,6 +194,7 @@ app.use("/api/trending", trendingRoutes);
 app.use("/api/bestseller", bestsellerRoutes);
 app.use("/api/products", filterRoutes);
 app.use("/api", orderRoutes);
+app.use("/api",addressRouter);
 
 // 🔹 Fetch product images
 app.get("/api/products/:id/images", async (req, res) => {
