@@ -41,8 +41,8 @@ export async function getProductOfCart(req, res) {
 
 export async function removeProductFromCart(req, res) {
   try {
-    const { user_id, product_id } = req.body;
-    const order = await removeFromCart(user_id, product_id);
+    const { user_id, order_item_id } = req.body;
+    const order = await removeFromCart(user_id, order_item_id);
     res.status(201).json({
       message: "Removed from Cart",
       order,
