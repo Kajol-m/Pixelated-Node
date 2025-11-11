@@ -2,7 +2,7 @@ import pool from "../config/db.js";
 
 export async function orderItemsId() {
   try {
-    // 1️⃣ Get the latest wishlist_id (in descending order)
+    
     const [rows] = await pool.execute(
       "SELECT order_item_id FROM order_items ORDER BY order_item_id DESC LIMIT 1"
     );
@@ -10,18 +10,16 @@ export async function orderItemsId() {
     let newIdNumber = 1;
 
     if (rows.length > 0) {
-      // Extract numeric part, e.g. "OIT00000012" → 12
       const lastId = rows[0].order_item_id;
       const numericPart = parseInt(lastId.replace("OIT", ""), 10);
       newIdNumber = numericPart + 1;
     }
 
-    // 2️⃣ Format the new ID as "OIT00000001"
     const newOrderItemId = "OIT" + String(newIdNumber).padStart(8, "0");
 
     return newOrderItemId;
   } catch (err) {
-    console.error("❌ Error generating wishlist ID:", err);
+    console.error("Error generating wishlist ID:", err);
     throw err;
   }
 }
@@ -38,8 +36,8 @@ export async function getCartProduct(user_id){
   return result;
 }
 
-export async function removeFromCart(user_id,product_id){
-  const [result] = await pool.execute("DELETE FROM order_items WHERE user_id=? AND product_id=?;",[user_id,product_id]);
+export async function removeFromCart(user_id,order_item_id){
+  const [result] = await pool.execute("DELETE FROM order_items WHERE user_id=? AND order_item_id=?;",[user_id,order_item_id]);
 
   return result;
 }
